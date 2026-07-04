@@ -20,4 +20,4 @@ app.use('/api/ai', aiRoutes);
 
 cron.schedule('*/30 * * * *', runProactiveCheck);
 
-app.listen(5000, () => console.log('✓ Kairo server running on https://kairo-sever.onrender.com'));
+app.listen(5000, () => console.log('✓ Kairo server running on https://kairo-isfu.onrender.com'));

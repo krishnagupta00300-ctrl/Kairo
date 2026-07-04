@@ -123,10 +123,10 @@ export default function Dashboard({ user, onLogout }) {
 }
 
   useEffect(() => {
-    fetch('https://kairo-sever.onrender.com/api/tasks', { headers })
+    fetch('https://kairo-isfu.onrender.com/api/tasks', { headers })
       .then(r => r.json()).then(data => { if (Array.isArray(data)) setTasks(data); })
       .catch(console.error);
-    fetch('https://kairo-sever.onrender.com/api/tasks/weekly-stats', { headers })
+    fetch('https://kairo-isfu.onrender.com/api/tasks/weekly-stats', { headers })
       .then(r => r.json()).then(data => { if (Array.isArray(data)) setWeeklyStats(data); })
       .catch(console.error);
     if ('Notification' in window && Notification.permission === 'default') {
@@ -240,7 +240,7 @@ export default function Dashboard({ user, onLogout }) {
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
     setChatLoading(true);
     try {
-      const res = await fetch('https://kairo-sever.onrender.com/api/ai/chat-plan', {
+      const res = await fetch('https://kairo-isfu.onrender.com/api/ai/chat-plan', {
         method: 'POST', headers,
         body: JSON.stringify({ message: userMsg, history: messages, existingTasks: tasks.filter(t => t.status === 'pending') })
       });
@@ -252,7 +252,7 @@ export default function Dashboard({ user, onLogout }) {
       if (data.plan) setAiPlan(data.plan);
       if (data.newTasks?.length > 0) {
         for (const t of data.newTasks) {
-          const r = await fetch('https://kairo-sever.onrender.com/api/tasks', { method: 'POST', headers, body: JSON.stringify({ title: t.title, deadline: t.deadline }) });
+          const r = await fetch('https://kairo-isfu.onrender.com/api/tasks', { method: 'POST', headers, body: JSON.stringify({ title: t.title, deadline: t.deadline }) });
           const task = await r.json();
           if (task.id) setTasks(prev => [...prev, task]);
         }
@@ -265,24 +265,24 @@ export default function Dashboard({ user, onLogout }) {
 
   async function addTask() {
     if (!newTask.trim()) return;
-    const res = await fetch('https://kairo-sever.onrender.com/api/tasks', { method: 'POST', headers, body: JSON.stringify({ title: newTask, deadline }) });
+    const res = await fetch('https://kairo-isfu.onrender.com/api/tasks', { method: 'POST', headers, body: JSON.stringify({ title: newTask, deadline }) });
     const task = await res.json();
     if (task.id) { setTasks(prev => [...prev, task]); addToast(`✓ "${newTask}" added`, 'success'); }
     setNewTask(''); setDeadline('');
   }
 
   async function completeTask(id) {
-    await fetch(`https://kairo-sever.onrender.com/api/tasks/${id}`, { method: 'PATCH', headers, body: JSON.stringify({ status: 'completed' }) });
+    await fetch(`https://kairo-isfu.onrender.com/api/tasks/${id}`, { method: 'PATCH', headers, body: JSON.stringify({ status: 'completed' }) });
     setTasks(prev => prev.map(t => t.id === id ? { ...t, status: 'completed' } : t));
     // Refresh weekly stats
-    fetch('https://kairo-sever.onrender.com/api/tasks/weekly-stats', { headers }).then(r => r.json()).then(data => { if (Array.isArray(data)) setWeeklyStats(data); });
+    fetch('https://kairo-isfu.onrender.com/api/tasks/weekly-stats', { headers }).then(r => r.json()).then(data => { if (Array.isArray(data)) setWeeklyStats(data); });
     if (focusTask?.id === id) { setFocusTask(null); setTimerRunning(false); setTimer(0); }
     addToast('✓ Task completed! Great work 🎉', 'success');
   }
 
   async function deleteTask(id, title) {
     setDeletingId(id);
-    await fetch(`https://kairo-sever.onrender.com/api/tasks/${id}`, { method: 'DELETE', headers });
+    await fetch(`https://kairo-isfu.onrender.com/api/tasks/${id}`, { method: 'DELETE', headers });
     setTasks(prev => prev.filter(t => t.id !== id));
     setDeletingId(null);
     addToast(`🗑 "${title}" deleted`, 'info');
@@ -290,7 +290,7 @@ export default function Dashboard({ user, onLogout }) {
 async function generateRecommendations() {
   setRecsLoading(true);
   try {
-    const res = await fetch('https://kairo-sever.onrender.com/api/ai/recommendations', {
+    const res = await fetch('https://kairo-isfu.onrender.com/api/ai/recommendations', {
       method: 'POST', headers,
       body: JSON.stringify({ tasks, weeklyStats, streak, user: { name: user.name } })
     });
@@ -306,7 +306,7 @@ async function generateAutoPlan() {
   setAutoInput('');
   setAutoLoading(true);
   try {
-    const res = await fetch('https://kairo-sever.onrender.com/api/ai/auto-plan', {
+    const res = await fetch('https://kairo-isfu.onrender.com/api/ai/auto-plan', {
       method: 'POST', headers,
       body: JSON.stringify({ goal: autoInput, tasks, user: { name: user.name } })
     });
@@ -317,7 +317,7 @@ async function generateAutoPlan() {
 }
 
 async function executeAutoStep(step) {
-  const res = await fetch('https://kairo-sever.onrender.com/api/tasks', {
+  const res = await fetch('https://kairo-isfu.onrender.com/api/tasks', {
     method: 'POST', headers,
     body: JSON.stringify({ title: step.task_title, deadline: step.deadline })
   });
