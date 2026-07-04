@@ -1,0 +1,9 @@
+node_modules/
+client/node_modules/
+server/node_modules/
+**/node_modules/
+client/node_modules/.cache/
+server/.env
+server/db/kairo.db
+client/build/
+*.log
