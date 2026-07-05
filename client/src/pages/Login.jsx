@@ -12,7 +12,7 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setLoading(true); setError('');
     try {
-      const res = await fetch('https://kairo-sever.onrender.com/api/auth/login', {
+      const res = await fetch('https://kairo-isfu.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
